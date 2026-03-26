@@ -5,13 +5,13 @@ A hyper-local food waste redistribution platform built as a distributed microser
 ## Architecture
 
 ```
-Client
+React Frontend (port 5173)
   │
   ▼
 API Gateway (port 8080)  ←── JWT validation on every request
   │
-  ├──▶ auth-service (port 8083)       — token generation
-  ├──▶ inventory-service (port 8081)  ──▶ inventory_db (MySQL)
+  ├──▶ auth-service (port 8083)        — token generation
+  ├──▶ inventory-service (port 8081)   ──▶ inventory_db (MySQL)
   └──▶ transaction-service (port 8082) ──▶ transaction_db (MySQL)
            │
            └──▶ [Feign] inventory-service (via Eureka)
@@ -29,6 +29,7 @@ Discovery Server / Eureka (port 8761)
 
 ## Tech Stack
 
+**Backend**
 - Java 21
 - Spring Boot 3.2.4
 - Spring Cloud 2023.0.1 (Eureka, Gateway, OpenFeign)
@@ -38,11 +39,19 @@ Discovery Server / Eureka (port 8761)
 - SpringDoc OpenAPI 2.3.0 (Swagger UI)
 - Maven (multi-module)
 
+**Frontend**
+- React 19 + Vite
+- Tailwind CSS 3
+- Axios (HTTP client)
+- React Router DOM (client-side routing)
+- jwt-decode (token parsing)
+
 ## Prerequisites
 
 - Java 21+
 - Maven 3.9+
 - MySQL 8.x running locally on port 3306
+- Node.js 18+ and npm
 
 ## Database Setup
 
@@ -91,6 +100,13 @@ mvn spring-boot:run
 ```
 
 Once all services are running, open [http://localhost:8761](http://localhost:8761) — you should see all four services registered with status UP.
+
+**6. Frontend**
+```bash
+cd frontend
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Authentication
 
@@ -197,13 +213,15 @@ surplus-sync/                        ← parent Maven module
 │       ├── repository/
 │       ├── service/
 │       └── controller/
-└── transaction-service/             ← Claims domain
-    └── src/main/java/.../transaction/
-        ├── entity/Claim.java
-        ├── repository/
-        ├── service/
-        ├── controller/
-        └── client/InventoryClient.java  ← Feign client
+├── transaction-service/             ← Claims domain
+│   └── src/main/java/.../transaction/
+│       ├── entity/Claim.java
+│       ├── repository/
+│       ├── service/
+│       ├── controller/
+│       └── client/InventoryClient.java  ← Feign client
+└── frontend/                        ← React + Vite + Tailwind
+    └── src/
 ```
 
 ## Configuration
