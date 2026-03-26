@@ -21,16 +21,29 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
-        if (!"admin".equals(request.username()) || !"password".equals(request.password())) {
+        if (request.username() == null || request.password() == null || !request.password().equals("password")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
+
+        String username = request.username().toLowerCase();
+        String role;
+        if (username.contains("rest")) {
+            role = "RESTAURANT";
+        } else if (username.contains("ngo") || username.contains("user")) {
+            role = "CONSUMER";
+        } else {
+            role = "CONSUMER";
+        }
+
         String token = Jwts.builder()
                 .subject(request.username())
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3_600_000))
                 .signWith(secretKey())
                 .compact();
-        return ResponseEntity.ok(Map.of("token", token));
+
+        return ResponseEntity.ok(Map.of("token", token, "role", role));
     }
 
     static SecretKey secretKey() {

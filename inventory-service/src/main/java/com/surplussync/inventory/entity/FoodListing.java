@@ -1,6 +1,7 @@
 package com.surplussync.inventory.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,6 +21,9 @@ public class FoodListing {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(precision = 10, scale = 2)
+    private BigDecimal price;
+
     @Column(nullable = false)
     private String status = "AVAILABLE";
 
@@ -38,6 +42,9 @@ public class FoodListing {
 
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
