@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import api from '../api/axiosConfig';
 
 export default function Login() {
@@ -13,8 +14,17 @@ export default function Login() {
     setError('');
     try {
       const response = await api.post('/auth-service/auth/login', { username, password });
-      localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+
+      const decoded = jwtDecode(token);
+      if (decoded.role === 'RESTAURANT') {
+        navigate('/restaurant');
+      } else if (decoded.role === 'CONSUMER') {
+        navigate('/consumer');
+      } else {
+        navigate('/consumer');
+      }
     } catch {
       setError('Invalid username or password. Please try again.');
     }
@@ -35,7 +45,7 @@ export default function Login() {
               onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="admin"
+              placeholder="e.g. rest_cafe or ngo_city"
             />
           </div>
 
@@ -64,6 +74,10 @@ export default function Login() {
             Sign In
           </button>
         </form>
+
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          Use a username containing <span className="font-medium">rest</span> for Restaurant or <span className="font-medium">ngo</span> for Consumer
+        </p>
       </div>
     </div>
   );
