@@ -40,7 +40,6 @@ export default function ConsumerDashboard() {
     try {
       await api.post('/transaction-service/claims', {
         listingId,
-        claimerName: 'Demo NGO',
         amount: 1,
       });
       showNotification('Claimed successfully!', 'success');

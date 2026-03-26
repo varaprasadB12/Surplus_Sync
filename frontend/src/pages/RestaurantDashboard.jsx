@@ -9,7 +9,7 @@ const formatPrice = (price) => {
 
 export default function RestaurantDashboard() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ restaurantName: '', itemDescription: '', quantity: '', price: '' });
+  const [form, setForm] = useState({ itemDescription: '', quantity: '', price: '' });
   const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(false);
   const [myListings, setMyListings] = useState([]);
@@ -25,13 +25,10 @@ export default function RestaurantDashboard() {
     }
   }, []);
 
-  const fetchMyListings = async (restaurantName) => {
+  const fetchMyListings = async () => {
     try {
       const response = await api.get('/inventory-service/listings');
-      const filtered = response.data.filter(
-        (l) => l.restaurantName.toLowerCase() === restaurantName.toLowerCase()
-      );
-      setMyListings(filtered);
+      setMyListings(response.data);
     } catch {
       // silently fail — history table is non-critical
     }
@@ -47,15 +44,13 @@ export default function RestaurantDashboard() {
     const parsedPrice = form.price !== '' ? parseFloat(form.price) : null;
     try {
       await api.post('/inventory-service/listings', {
-        restaurantName: form.restaurantName,
         itemDescription: form.itemDescription,
         quantity: parseInt(form.quantity, 10),
         price: parsedPrice !== null && !isNaN(parsedPrice) ? parsedPrice : null,
       });
-      const postedName = form.restaurantName;
-      setForm({ restaurantName: '', itemDescription: '', quantity: '', price: '' });
+      setForm({ itemDescription: '', quantity: '', price: '' });
       showNotification('Listing posted successfully!', 'success');
-      fetchMyListings(postedName);
+      fetchMyListings();
     } catch {
       showNotification('Failed to post listing. Please try again.', 'error');
     } finally {
@@ -98,18 +93,6 @@ export default function RestaurantDashboard() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Restaurant Name</label>
-                <input
-                  type="text"
-                  name="restaurantName"
-                  required
-                  value={form.restaurantName}
-                  onChange={handleChange}
-                  placeholder="e.g. Green Bowl Cafe"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Item Description</label>
                 <input

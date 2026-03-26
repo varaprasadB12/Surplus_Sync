@@ -1,4 +1,4 @@
-gtpackage com.surplussync.inventory.service;
+package com.surplussync.inventory.service;
 
 import com.surplussync.inventory.entity.FoodListing;
 import com.surplussync.inventory.repository.FoodListingRepository;
