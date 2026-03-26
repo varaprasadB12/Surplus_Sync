@@ -24,6 +24,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getURI().getPath();
 
         if (path.startsWith("/auth/")
+                || path.startsWith("/auth-service/")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")
                 || path.startsWith("/webjars/")) {
