@@ -20,10 +20,12 @@ public class FoodListingController {
         this.service = service;
     }
 
-    @Operation(summary = "Create a food listing", description = "Allows a restaurant to post a new surplus food listing with quantity and description.")
+    @Operation(summary = "Create a food listing", description = "Allows a restaurant to post a new surplus food listing with quantity and description. Restaurant name is taken securely from the X-User-Name gateway header.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FoodListing create(@RequestBody FoodListing listing) {
+    public FoodListing create(@RequestHeader("X-User-Name") String restaurantName,
+                              @RequestBody FoodListing listing) {
+        listing.setRestaurantName(restaurantName);
         return service.create(listing);
     }
 

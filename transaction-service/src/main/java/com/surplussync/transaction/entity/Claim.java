@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 @Table(name = "claims")
 public class Claim {
 
+    public enum PaymentStatus {
+        PENDING, COMPLETED, FAILED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,6 +23,10 @@ public class Claim {
 
     @Column(nullable = false)
     private String claimStatus = "PENDING";
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -35,6 +43,9 @@ public class Claim {
 
     public String getClaimStatus() { return claimStatus; }
     public void setClaimStatus(String claimStatus) { this.claimStatus = claimStatus; }
+
+    public PaymentStatus getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

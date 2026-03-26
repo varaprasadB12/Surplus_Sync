@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// Valid status values: AVAILABLE, CLAIMED, EXPIRED
+
 @Entity
 @Table(name = "food_listings")
 public class FoodListing {
@@ -28,7 +30,12 @@ public class FoodListing {
     private String status = "AVAILABLE";
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public FoodListing() {}
 

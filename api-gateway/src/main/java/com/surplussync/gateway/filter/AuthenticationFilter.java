@@ -40,17 +40,28 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
 
+        io.jsonwebtoken.Claims claims;
         try {
-            Jwts.parser()
+            claims = Jwts.parser()
                     .verifyWith(secretKey())
                     .build()
-                    .parseSignedClaims(token);
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (Exception e) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
 
-        return chain.filter(exchange);
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class);
+
+        ServerWebExchange mutatedExchange = exchange.mutate()
+                .request(r -> r
+                        .header("X-User-Name", username != null ? username : "")
+                        .header("X-User-Role", role != null ? role : ""))
+                .build();
+
+        return chain.filter(mutatedExchange);
     }
 
     @Override

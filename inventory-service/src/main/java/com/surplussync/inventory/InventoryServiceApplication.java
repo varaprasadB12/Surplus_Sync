@@ -2,6 +2,7 @@ package com.surplussync.inventory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * SurplusSync Inventory Service.
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * with the transaction service, enforcing microservice data isolation.</p>
  */
 @SpringBootApplication
+@EnableScheduling
 public class InventoryServiceApplication {
 
     public static void main(String[] args) {

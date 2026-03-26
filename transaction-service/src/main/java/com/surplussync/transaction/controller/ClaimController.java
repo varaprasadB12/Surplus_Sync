@@ -21,9 +21,12 @@ public class ClaimController {
         this.service = service;
     }
 
-    @Operation(summary = "Submit a claim", description = "An NGO or individual submits a claim for a food listing. Calls inventory-service to decrement quantity atomically. Returns 409 if the listing is unavailable or quantity is insufficient.")
+    @Operation(summary = "Submit a claim", description = "An NGO or individual submits a claim for a food listing. Claimer identity is taken securely from the X-User-Name gateway header. Returns 409 if the listing is unavailable or quantity is insufficient.")
     @PostMapping
-    public ResponseEntity<Claim> submit(@RequestBody Claim claim) {
+    public ResponseEntity<Claim> submit(@RequestHeader("X-User-Name") String claimerName,
+                                        @RequestBody Claim claim) {
+        claim.setClaimerName(claimerName);
+        claim.setPaymentStatus(Claim.PaymentStatus.PENDING);
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(service.submit(claim));
         } catch (IllegalArgumentException e) {
